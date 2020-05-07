@@ -53,5 +53,3 @@ def gainProportion(populationList):
         proportion[k] = v/total_population
     proportion['total_population'] = total_population
     return(proportion)
-
-
