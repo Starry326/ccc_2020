@@ -1,0 +1,56 @@
+---
+- name: Gather facts of remote host
+  setup:
+    gather_subset: all
+
+- name: Add proxy in /etc/environment
+  become: yes
+  blockinfile:
+    path: /etc/environment
+    block: |
+      HTTP_PROXY=http://wwwproxy.unimelb.edu.au:8000/	
+      HTTPS_PROXY=http://wwwproxy.unimelb.edu.au:8000/	
+      http_proxy=http://wwwproxy.unimelb.edu.au:8000/	
+      https_proxy=http://wwwproxy.unimelb.edu.au:8000/	
+      no_proxy=localhost,127.0.0.1,localaddress,172.16.0.0/12,.melbourne.rc.nectar.org.au,.storage.unimelb.edu.au,.cloud.unimelb.edu.au
+
+- name: create the docker setting directory
+  become: yes
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+
+- name: create the docker conf file
+  become: yes
+  file:
+    path: /etc/systemd/system/docker.service.d/http-proxy.conf
+    state: touch
+
+- name: Add docker proxy settings
+  become: yes
+  blockinfile:
+    path: /etc/systemd/system/docker.service.d/http-proxy.conf
+    block: |
+      [Service]
+      Environment="HTTP_PROXY=http://wwwproxy.unimelb.edu.au:8000/"
+
+- name: Reboot a machine
+  become: yes
+  reboot:
+    reboot_timeout: 3000
+
+- name: Install dependencies
+  tags: always
+  become: yes
+  apt:
+    name: ['apt-transport-https', 'build-essential', 'ca-certificates', 'curl', 'git', 'python3-dev', 'python3-pip', 'python3-setuptools', 'software-properties-common', 'unzip', 'vim']
+    state: latest
+    install_recommends: no
+    update_cache: yes
+
+- name: Update pip
+  tags: always
+  become: yes
+  pip:
+    name: ['pip']
+    state: latest
