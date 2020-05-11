@@ -10,8 +10,8 @@
     state: directory
 
 - name: Copy app codes to dest
-    src: "../../app/"
-    dest: "{{ app_dir }}/app/"
+    src: "~/cccproject/ccc_2020/app/"
+    dest: "{{ app_dir }}"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
