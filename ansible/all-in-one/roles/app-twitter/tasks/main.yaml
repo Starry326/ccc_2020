@@ -35,14 +35,14 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
-- name: Configure dockerfile
-  tags: 'app'
-  become: yes
-  template:
-    src: dockerfile.j2
-    dest: "{{ app_dir }}/dockerfile"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+# - name: Configure dockerfile
+#   tags: 'app'
+#   become: yes
+#   template:
+#     src: dockerfile.j2
+#     dest: "{{ app_dir }}/dockerfile"
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
 
 
 - name: Run docker compose
