@@ -9,12 +9,20 @@
     recurse: yes
     state: directory
 
-- name: Copy app codes to dest
+# - name: Copy app codes to dest
+#   tags: 'app'
+#   become: yes
+#   copy:
+#     src: "../../app/"
+#     dest: "{{ app_dir }}/app"
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
+- name: Configure nginx
   tags: 'app'
   become: yes
-  copy:
-    src: "../../app/"
-    dest: "{{ app_dir }}/app"
+  template:
+    src: "../../../../app/nginx.conf"
+    dest: "{{ app_dir }}/nginx.conf"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
