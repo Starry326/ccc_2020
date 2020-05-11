@@ -18,4 +18,4 @@
     # - role: app-common
     # - role: app-volumes
     # - role: app-docker
-    - role: app-wordpress
+    - role: app-twitter

@@ -9,6 +9,12 @@
     recurse: yes
     state: directory
 
+- name: Copy app codes to dest
+    src: ../../app/
+    dest: "{{ app_dir }}/app/"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
 - name: Configure compose
   tags: 'app'
   become: yes
