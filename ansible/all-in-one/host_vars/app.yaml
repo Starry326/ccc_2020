@@ -1,0 +1,14 @@
+---
+volumes:
+  - device: /dev/vdb
+    mountpoint: /var/lib/docker
+  - device: /dev/vdc
+    mountpoint: /data
+
+wp_dir: wordpress
+
+# couchDB
+COUCHDB_USER: admin
+COUCHDB_PASSWORD: admin
+COUCHDB_SECRET: 'a192aeb9904e6590849337933b000c99'
+ERL_FLAGS: "-setcookie \"a192aeb9904e6590849337933b000c99\" -name \"couchdb@172.17.0.2\""
