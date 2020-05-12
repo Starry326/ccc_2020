@@ -63,8 +63,8 @@ security_groups:
   - name: sg_couchdb9100
     description: "security group for couchdb"
     protocol: tcp
-    port_range_min: 9100-9200
-    port_range_max: 9100-9200
+    port_range_min: 9100
+    port_range_max: 9200
     remote_ip_prefix: 0.0.0.0/0
 
 # Instance
