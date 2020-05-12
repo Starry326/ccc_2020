@@ -4,10 +4,10 @@
   gather_facts: true
 
   roles:
-    # - role: openstack-common
-    # - role: openstack-volume
-    # - role: openstack-security-group
-    # - role: openstack-instance
+    - role: openstack-common
+    - role: openstack-volume
+    - role: openstack-security-group
+    - role: openstack-instance
 
 - hosts: COMP90024
   vars_files:
@@ -15,7 +15,7 @@
   gather_facts: true
 
   roles:
-    # - role: app-common
-    # - role: app-volumes
-    # - role: app-docker
+    - role: app-common
+    - role: app-volumes
+    - role: app-docker
     - role: app-twitter
