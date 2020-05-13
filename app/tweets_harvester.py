@@ -6,7 +6,7 @@ import json
 
 user = "admin"
 password = "admin"
-db_ip = '172.17.0.2'
+db_ip = '127.0.0.1'
 couchserver = couchdb.Server('http://%s:%s@%s:5984/'% (user, password, db_ip))
 auriandb = "population"
 dbname = "starry_data"
