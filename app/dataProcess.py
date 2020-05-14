@@ -42,6 +42,7 @@ def gainAurinData(region):
         else:
             key = 'over85'
         result_list[key]=result
+        
     return(result_list)
 
 def gainProportion(populationList):
