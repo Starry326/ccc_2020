@@ -11,11 +11,11 @@
 
 - hosts: COMP90024
   vars_files:
-    - host_vars/wordpress.yaml
+    - host_vars/app.yaml
   gather_facts: true
 
   roles:
-    - role: wp-common
-    - role: wp-volumes
-    - role: wp-docker
-    - role: wp-wordpress
+    - role: app-common
+    - role: app-volumes
+    - role: app-docker
+    - role: app-twitter

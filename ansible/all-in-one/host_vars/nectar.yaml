@@ -4,17 +4,17 @@ availability_zone: melbourne-qh2-uom
 # Volume
 volumes:
   - vol_name: instance1-vol-1.1
-    vol_size: 10
+    vol_size: 30
   - vol_name: instance1-vol-1.2
-    vol_size: 10
+    vol_size: 30
   - vol_name: instance1-vol-2.1
-    vol_size: 10
+    vol_size: 30
   - vol_name: instance1-vol-2.2
-    vol_size: 10
+    vol_size: 30
   - vol_name: instance1-vol-3.1
-    vol_size: 10
+    vol_size: 30
   - vol_name: instance1-vol-3.2
-    vol_size: 10
+    vol_size: 30
 
 # Security group
 security_groups:
@@ -64,7 +64,19 @@ security_groups:
     description: "security group for couchdb"
     protocol: tcp
     port_range_min: 9100
-    port_range_max: 9100
+    port_range_max: 9200
+    remote_ip_prefix: 0.0.0.0/0
+  - name: sg_flask5000
+    description: "security group for flask"
+    protocol: tcp
+    port_range_min: 5000
+    port_range_max: 5000
+    remote_ip_prefix: 0.0.0.0/0
+  - name: sg_twitter443
+    description: "security group for stream api"
+    protocol: tcp
+    port_range_min: 443
+    port_range_max: 443
     remote_ip_prefix: 0.0.0.0/0
 
 # Instance

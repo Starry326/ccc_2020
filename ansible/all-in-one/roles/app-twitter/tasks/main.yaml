@@ -1,0 +1,57 @@
+---
+- name: Create app directory
+  tags: 'app'
+  become: yes
+  file:
+    path: "{{ app_dir }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    recurse: yes
+    state: directory
+
+# - name: Copy app codes to dest
+#   tags: 'app'
+#   become: yes
+#   copy:
+#     src: "../../app/"
+#     dest: "{{ app_dir }}/app"
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
+
+- name: Configure nginx
+  tags: 'app'
+  become: yes
+  template:
+    src: "../../../../app/nginx.conf"
+    dest: "{{ app_dir }}/nginx.conf"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+# - name: Configure compose
+#   tags: 'app'
+#   become: yes
+#   template:
+#     src: docker-compose.yaml.j2
+#     dest: "{{ app_dir }}/docker-compose.yaml"
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
+
+# - name: Configure dockerfile
+#   tags: 'app'
+#   become: yes
+#   template:
+#     src: dockerfile.j2
+#     dest: "{{ app_dir }}/dockerfile"
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
+
+
+# - name: Run docker compose
+#   tags: 'app'
+#   become: yes
+#   docker_compose:
+#     project_src: "{{ app_dir }}"
+#     pull: yes
+#     state: present
+#     remove_orphans: yes
+#     recreate: always

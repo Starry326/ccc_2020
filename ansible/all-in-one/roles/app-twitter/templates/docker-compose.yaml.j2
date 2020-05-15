@@ -1,0 +1,32 @@
+version: '2.2'
+
+services:
+  db:
+    image: ibmcom/couchdb3:3.0.0
+    restart: always
+    ports:
+      - 5984:5984
+      - 4369:4369
+      - 9100-9200:9100-9200
+    environment:
+      COUCHDB_USER: {{ COUCHDB_USER }}
+      MYSQLCOUCHDB_PASSWORD_USER: {{ COUCHDB_PASSWORD }}
+      COUCHDB_SECRET: {{ COUCHDB_SECRET }}
+      ERL_FLAGS: {{ ERL_FLAGS }}
+    volumes:
+      - {{ db_dir }}:/opt/couchdb
+
+  app:
+    image: dengzilong326/twitter_analyse:v1
+    ports: 
+      - 5000:5000
+    
+
+  nginx:
+    image: nginx
+    ports: 
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    
+  

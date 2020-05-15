@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Scenario 1 - {{region}}</title>
+        <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-base.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
+        <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-exports.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
+        <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-ui.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
+    </head>
+    <body>
+        <h1><a href="{{url_for('index')}}">COMP90024 Project 2</a></h1>
+        <h2><a href="{{url_for('scenario1')}}">Scenario 1</a> - {{region}}</h2>
+        <p>
+            {{results.tweets_count}} tweets about {{keywords}} have been collected
+        </p>
+        <div id="container" style"width: 100%; height: 100%"></div>
+        <p>
+            add analysis here
+        </p>
+        <script type="text/javascript">
+            var data = [];
+            var total = {{results.population_data.total_population}};
+            for (var key in {{results.population_data}}) {
+                if (key != "total_pupulation") {
+                    var value = {{results.population_data[key]}} * total;
+                    data.push({"x": key, "value": value})
+                }
+            }
+            anychart.onDocumentReady(function () {
+                // char setting
+                var chart = anychart.fromJson({
+                    "chart": {
+                        "title": "Population Distribution",
+                        "type": "column",
+                        "xAxes": [{"title": "Age"}],
+                        "yAxes": [{"title": "Population"}],
+                        "yScale": {
+                            "minimum": 0,
+                            "maximum": 1000000
+                        },
+                        "series":[{
+                            "data": data,
+                        }],
+                        "container": "container"
+                    }
+                });
+
+            chart.draw();
+            });
+        </script>
+    </body>
+</html>
