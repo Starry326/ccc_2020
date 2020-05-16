@@ -17,8 +17,8 @@ keywords = ["nightclub", "bar"]
 
 class Scenario1(Resource):
     def get(self):
-        #regions = ["nsw", "qld", "sa", "tas", "vic", "wa", "act", "nt"]
-        regions = ["nsw"]
+        regions = ["nsw", "qld", "sa", "tas", "vic", "wa", "act", "nt"]
+        #regions = ["nsw"]
         tweets = dict()
         tweets["total"] = 0
         tweets["distribution"] = []
@@ -38,8 +38,7 @@ class gainData(Resource):
         results = dict()
         results['population_data'] = proportion
         results['tweets_count'] = tweetData
-        return(results)
-        #return make_response(render_template('scenario1Region.html', results=results, region=region.upper()))
+        return make_response(render_template('scenario1Region.html', keywords=keywords, results=results, region=region.upper()))
 
 api.add_resource(gainData, '/starry_app/gain_data/<region>')
 
