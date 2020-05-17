@@ -1,0 +1,6 @@
+FROM python:latest
+MAINTAINER huiyuy@student.unimelb.edu.au
+COPY ./app/ /app/
+WORKDIR /app/
+RUN pip install flask flask_restful pycurl couchdb tweepy
+CMD ["python","tweets_harvester2.py"]
