@@ -1,7 +1,9 @@
 from flask import Flask, request, Response, render_template, make_response
 from flask_restful import Api, Resource, reqparse, abort
-from dataProcess import gainTweetsData, gainAurinData, gainProportion, gainTweetsData2, gainAurinData2, gainAurinData3
+from dataProcess import gainTweetsData, gainAurinData, gainProportion, gainTweetsData2, gainAurinData2, gainAurinData3, gainTweetsData3, gainAurinData4
 import os.path
+
+
 
 
 def create_app():
@@ -43,6 +45,21 @@ class gainData2(Resource):
 
 
 api.add_resource(gainData2, '/charlie_app/gain_data/<region>')
+
+
+class gainData3(Resource):
+    def get(self, region):
+        tweetData = gainTweetsData3(region)
+        lowIncomeHouseholds = gainAurinData4(region)
+        populationData = gainAurinData(region)
+        results = dict()
+        results['low_income_households'] = lowIncomeHouseholds
+        results['population'] = populationData
+        results['tweets_count'] = tweetData
+        return (results)
+
+
+api.add_resource(gainData3, '/travis_app/gain_data/<region>')
 
 
 class Index(Resource):

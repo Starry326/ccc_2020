@@ -1,21 +1,21 @@
 import pycurl
 import json
-from io import BytesIO 
+from io import BytesIO
 
 user = "admin"
 password = "admin"
 db_ip = '127.0.0.1'
 
 def gainTweetsData(region):
-    b_obj = BytesIO() 
-    crl = pycurl.Curl() 
+    b_obj = BytesIO()
+    crl = pycurl.Curl()
     # Set URL value
     crl.setopt(crl.URL, 'http://%s:%s@%s:5984/starry_data/_partition/%s/_design/count/_view/tweets-count?reduce=true&group_level=0'% (user, password, db_ip, region))
     crl.setopt(crl.WRITEDATA, b_obj)
-    crl.perform() 
+    crl.perform()
     crl.close()
     get_body = b_obj.getvalue()
-    # get the result(count of tweets in this region) 
+    # get the result(count of tweets in this region)
     result = json.loads(get_body.decode('utf8'))
     result = result['rows'][0]['value']
     return(result)
@@ -23,18 +23,18 @@ def gainTweetsData(region):
 def gainAurinData(region):
     result_list = dict()
     for age in range(0,86,5):
-        b_obj = BytesIO() 
-        crl = pycurl.Curl() 
+        b_obj = BytesIO()
+        crl = pycurl.Curl()
         # Set URL value
         if(age != 85):
             crl.setopt(crl.URL, 'http://%s:%s@%s:5984/population/_partition/%s/_design/population/_view/%s-%s-count?reduce=true&group_level=0'% (user, password, db_ip, region, str(age), str(age+4)))
         else:
             crl.setopt(crl.URL, 'http://%s:%s@%s:5984/population/_partition/%s/_design/population/_view/over85-count?reduce=true&group_level=0'% (user, password, db_ip, region))
         crl.setopt(crl.WRITEDATA, b_obj)
-        crl.perform() 
+        crl.perform()
         crl.close()
         get_body = b_obj.getvalue()
-        # get the result(count of tweets in this region) 
+        # get the result(count of tweets in this region)
         result = json.loads(get_body.decode('utf8'))
         result = result['rows'][0]['value']
         if(age != 85):
@@ -235,5 +235,40 @@ def gainAurinData3(region):
     for x in result['rows']:
         key = str(x['key']) + ' median income'
         result_list[key] = x['value']
+
+    return (result_list)
+
+
+def gainTweetsData3(region):
+    b_obj = BytesIO()
+    crl = pycurl.Curl()
+    # Set URL value
+    crl.setopt(crl.URL, 'http://%s:%s@%s:5984/travis_data/_partition/%s/_design/count/_view/tweets-count?reduce=true&group_level=0'% (user, password, db_ip, region))
+    crl.setopt(crl.WRITEDATA, b_obj)
+    crl.perform()
+    crl.close()
+    get_body = b_obj.getvalue()
+    # get the result(count of tweets in this region)
+    result = json.loads(get_body.decode('utf8'))
+    result = result['rows'][0]['value']
+    return(result)
+
+def gainAurinData4(region):
+    result_list = dict()
+    b_obj = BytesIO()
+    crl = pycurl.Curl()
+    # Set URL value
+    crl.setopt(crl.URL,
+               'http://%s:%s@%s:5984/low_income_households/_partition/%s/_design/low_income_households/_view/lowIncomeHouseholds?reduce=true&group_level=0' % (
+               user, password, db_ip, region))
+    crl.setopt(crl.WRITEDATA, b_obj)
+    crl.perform()
+    crl.close()
+    get_body = b_obj.getvalue()
+    # get the result(count of tweets in this region)
+    result = json.loads(get_body.decode('utf8'))
+    result = result['rows'][0]['value']
+    key = "lowIncomeHouseholds"
+    result_list[key] = result
 
     return (result_list)
