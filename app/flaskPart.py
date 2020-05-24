@@ -3,8 +3,7 @@ from flask_restful import Api, Resource, reqparse, abort
 from dataProcess import gainTweetsData, gainAurinData, gainProportion, gainTweetsData2, gainAurinData2, gainAurinData3, gainTweetsData3, gainAurinData4
 import os.path
 
-
-
+keywords = {'scenario1': ["nightclub", "bar"]}
 
 def create_app():
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -17,6 +16,20 @@ def create_app():
 app = create_app()
 api = Api(app)
 
+class Scenario1(Resource):
+    def get(self):
+        regions = ["nsw", "qld", "sa", "tas", "vic", "wa", "act", "nt"]
+        #regions = ["nsw"]
+        tweets = dict()
+        tweets["total"] = 0
+        tweets["distribution"] = []
+        for region in regions:
+            count = gainTweetsData(region)
+            tweets["total"] += count
+            tweets["distribution"].append({"region": region, "count": count})
+        return make_response(render_template('scenario1.html', keywords=keywords, regions=regions, tweets=tweets))
+
+api.add_resource(Scenario1, '/starry_app/gain_data')
 
 class gainData(Resource):
     def get(self, region):
@@ -41,8 +54,7 @@ class gainData2(Resource):
         results['hospital_count'] = hospitalData
         results['income'] = incomeData
         results['tweets_count'] = tweetData
-        return (results)
-
+        return make_response(render_template('scenario1Region.html', keywords=keywords["scenario1"], results=results, region=region.upper()))
 
 api.add_resource(gainData2, '/charlie_app/gain_data/<region>')
 

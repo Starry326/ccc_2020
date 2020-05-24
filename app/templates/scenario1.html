@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Scenario 1</title>
+        <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-base.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
+        <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-exports.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
+        <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-ui.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
+    </head>
+    <body>
+        <h1><a href="{{url_for('index')}}">COMP90024 Project 2</a></h1>
+        <h2>Scenario 1</h2>
+        <p>
+            {{tweets.total}} tweets about {{keywords}} have been collected
+        </p>
+        <div id="container" style="width: 50vw; height: 50vw"></div>
+        <div>
+            <h3>AURIN data - population across Australia</h3>
+            <p>
+                official data from AURIN
+            </p>
+            <ol>
+                {% for region in regions %}
+                <li><a href="{{ url_for('gaindata', region=region) }}">{{region|upper}}</a></li>
+                {% endfor %}
+            </ol>
+        </div>
+        <script type="text/javascript">
+
+
+            // render pie chart
+            anychart.onDocumentReady(function() {
+              // get response json
+              var tweets = {{tweets|tojson}}; // tweets = {"total": _, "distribution": {}}
+              var distribution = tweets.distribution; // an array [{"region: _, "count": _}]
+              // get tweets data and convert to pie chart form
+              var data = [];
+              for (let i = 0; i < distribution.length; i++) {
+                  data.push({"x": distribution[i].region.toUpperCase(), "value": distribution[i].count});
+              }
+                // chart settings
+                var json = {
+                    "chart": {
+                        "title": "Tweets",
+                        "type": "pie",
+                        "data": data,
+                        "container": "container"
+                    }
+                };
+
+                // get JSON data
+                var chart = anychart.fromJson(json);
+
+                // draw chart
+                chart.draw();
+            });
+        </script>
+    </body>
+</html>
