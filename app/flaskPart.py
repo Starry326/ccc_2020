@@ -27,7 +27,7 @@ class Scenario1(Resource):
             count = gainTweetsData(region)
             tweets["total"] += count
             tweets["distribution"].append({"region": region, "count": count})
-        return make_response(render_template('scenario1.html', keywords=keywords, regions=regions, tweets=tweets))
+        return make_response(render_template('scenario1.html', keywords=keywords['scenario1'], regions=regions, tweets=tweets))
 
 api.add_resource(Scenario1, '/starry_app/gain_data')
 
@@ -39,8 +39,8 @@ class gainData(Resource):
         results = dict()
         results['population_data'] = proportion
         results['tweets_count'] = tweetData
-        return (results)
-
+        #return results
+        return make_response(render_template('scenario1Region.html', keywords=keywords['scenario1'], results=results, region=region.upper()))
 
 api.add_resource(gainData, '/starry_app/gain_data/<region>')
 
@@ -54,7 +54,7 @@ class gainData2(Resource):
         results['hospital_count'] = hospitalData
         results['income'] = incomeData
         results['tweets_count'] = tweetData
-        return make_response(render_template('scenario1Region.html', keywords=keywords["scenario1"], results=results, region=region.upper()))
+        return results
 
 api.add_resource(gainData2, '/charlie_app/gain_data/<region>')
 

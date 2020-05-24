@@ -22,7 +22,7 @@
                 var population = {{results.population_data|tojson}};
                 var total = population["total_population"];
                 for (var key in population) {
-                    if (key != "total_pupulation") {
+                    if (key != "total_population") {
                         var value = population[key] * total;
                         data.push({"x": key, "value": value});
                     }
@@ -36,7 +36,7 @@
                         "yAxes": [{"title": "Population"}],
                         "yScale": {
                             "minimum": 0,
-                            "maximum": 1000000
+                            "maximum": 750000
                         },
                         "series":[{
                             "data": data,
