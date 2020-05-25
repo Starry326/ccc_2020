@@ -5,7 +5,7 @@ import os.path
 
 keywords = {"scenario1": ["nightclub", "bar"],
             "scenario2": ["covid-19", "coronavirus"],
-            "scenario3": []}
+            "scenario3": ["financial pressure", "pressure", "covid-19"]}
 regions = ["nsw", "qld", "sa", "tas", "vic", "wa", "act", "nt"]
 
 def create_app():
@@ -49,6 +49,21 @@ class Scenario2(Resource):
 
 api.add_resource(Scenario2, '/charlie_app/gain_data')
 
+class Scenario3(Resource):
+    def get(self):
+        results = dict()
+        for region in regions:
+            tweet_data = gainTweetsData3(region)
+            low_income_households_data = gainAurinData4(region)
+            population_data = gainAurinData(region)
+            result = dict()
+            result['low_income_households'] = low_income_households_data['lowIncomeHouseholds'];
+            result['population'] = population_data
+            result['tweets_count'] = tweet_data
+            results[region] = result
+        return make_response(render_template('scenario3.html', keywords=keywords['scenario3'], regions=regions, results=results))
+api.add_resource(Scenario3, '/travis_app/gain_data')
+
 class gainData(Resource):
     def get(self, region):
         tweetData = gainTweetsData(region)
@@ -73,7 +88,6 @@ class gainData2(Resource):
         return results
 
 api.add_resource(gainData2, '/charlie_app/gain_data/<region>')
-
 
 class gainData3(Resource):
     def get(self, region):

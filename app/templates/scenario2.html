@@ -4,7 +4,6 @@
         <title>Scenario 2</title>
         <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-base.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
         <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-map.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
-        <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-exports.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
         <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-ui.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.15/proj4.js"></script>
         <script src="https://cdn.anychart.com/geodata/2.0.0/countries/australia/australia.js"></script>
@@ -177,7 +176,7 @@
                 chart.draw();
                 // ------------------------ container 4 ------------------------
                 var income_data = [];
-                
+                income_data = anychart.data.set(income_data);
 
                 var chart = anychart.line();
                 chart.padding([10, 20, 5, 20]);
@@ -186,10 +185,53 @@
                 chart.title('Income across Australia');
                 chart.yAxis().title('Income');
                 chart.xAxis().title('Region');
-                var logScale = anychart.scales.log();
-                logScale.minimum(1)
-                   .maximum(45000);
+                //var logScale = anychart.scales.log();
+                //logScale.minimum(1)
+                //   .maximum(45000);
 
+                var firstSeriesData = income_data.mapAs({ x: 0, value: 1 });
+                var secondSeriesData = income_data.mapAs({ x: 0, value: 2 });
+                var thirdSeriesData = income_data.mapAs({ x: 0, value: 3 });
+                var forthSeriesData = income_data.mapAs({ x: 0, value: 4 });
+                var series;
+                series = chart.line(firstSeriesData);
+                series.name("Greater city mean income");
+                series.labels()
+                    .enabled(true)
+                    .anchor('left-bottom')
+                    .padding(5);
+                series.markers(true);
+                series = chart.line(secondSeriesData);
+                series.name("Greater region mean income");
+                series.labels()
+                    .enabled(true)
+                    .anchor('left-bottom')
+                    .padding(5);
+                series.markers(true);
+                series = chart.line(thirdSeriesData);
+                series.name("Greater city median income");
+                series.labels()
+                    .enabled(true)
+                    .anchor('left-bottom')
+                    .padding(5);
+                series.markers(true);
+                series = chart.line(firstSeriesData);
+                series.name("Greater region median income");
+                series.labels()
+                    .enabled(true)
+                    .anchor('left-bottom')
+                    .padding(5);
+                series.markers(true);
+
+                chart.legend()
+                    .enabled(true)
+                    .fontSize(13)
+                    .padding([0, 0, 20, 0]);
+                chart.container("container4");
+                chart.draw();
+                // ------------------------ innerHTML ------------------------
+                document.getElementById("p1").innerHTML = total_tweets+" tweets about "+{{keywords|tojson}}+" have been collected";
+              });
             });
         </script>
     </body>
