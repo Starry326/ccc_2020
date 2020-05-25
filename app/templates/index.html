@@ -4,13 +4,14 @@
     <title>COMP90024 Project 2</title>
     </head>
     <body>
-        <h1>COMP90024 Project 2</h1>
-        <h2>Hello {{current_ip}}</h2>
-        <p>
-            Goal: harvest tweets and discover interesting scenarios about Australia
+        <h1 style="font-size:40px">COMP90024 Project 2</h1>
+        <h2 style="font-size:30px">Goal:</h2>
+        <p style="font-size:20px">
+            To harvest tweets from across the regions of Australia on the UniMelb Research Cloud and undertake a variety of social media data <b>analytics scenarios</b> that tell intesting stories of life in Australian regions
+            and importantly how the Twitter data can be used alongside/compared with/augment the data available within the AURIN platform to improve our knowledge of life in the regions of Australia.<br>
         </p>
-        <ol>
-            <li><a href="{{ url_for('scenario1') }}">Nightclub & Bar</a></li>
+        <ol style="font-size:20px">
+            <li><a href="{{ url_for('scenario1') }}">How many tweets mention <b>nightclub</b> or <b>bar</b>? Are these clusterd in certain areas?</a></li>
             <li><a href="{{ url_for('scenario2') }}">How many tweets mention <b>covid-19</b> or <b>coronavirus</b>? Are these clusterd in certain areas?</a></li>
             <li><a href="{{ url_for('scenario3') }}">How many tweets mention <b>covid-19</b>, <b>financial pressure</b> or <b>pressure</b>? Are these clusterd in certain areas?</a></li>
         </ol>

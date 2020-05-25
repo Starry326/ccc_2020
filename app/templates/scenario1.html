@@ -11,17 +11,18 @@
         <script src="https://cdn.anychart.com/releases/v8/js/anychart-ui.min.js"></script>
     </head>
     <body>
-        <h1><a href="{{url_for('index')}}">COMP90024 Project 2</a></h1>
-        <h2>Scenario 1</h2>
-        <p>This story is about... </p>
-        <p id="p1"></p>
+        <h1 style="font-size:40px"><a href="{{url_for('index')}}">COMP90024 Project 2</a></h1>
+        <h2 style="font-size:30px">Scenario 1</h2>
+        <p id="p1" style="font-size:18px"></p>
         <div id="container1" style="width: 50vw; height: 80vh"></div>
-        <p>
-            The graph above shows the tweet distribution and the tweet to population ratio for each region in Australia.<br>
-            The tweet to population ratio measures the number of tweets about {{keywords}} against the total population of each region.
+        <div id="container2" style="width: 50vw; height: 40vh"></div>
+        <p style="font-size:18px">
+            The graphs above show the tweet distribution and the tweet to population ratio for each region in Australia.<br>
+            The tweet to population ratio measures the number of tweets about {{keywords|tojson}} against the total population of each region.
         </p>
-        <div id="container2"style="width: 90vw; height: 90vh"></div>
-        <p>
+        <div id="container3"style="width: 90vw; height: 90vh"></div>
+        <p>(Click on the legend to select which region(s) to investigate)</p>
+        <p style="font-size:18px">
             This bar chart illustrates the population of different age groups across Australia.
         </p>
 
@@ -76,14 +77,24 @@
               map.bounds(0, 0, "100%", "70%");
               map.container(stage);
               map.draw();
-
-              var area = anychart.area();
-              area.title("Tweet to Population Ratio");
-              area.splineArea(ratio_data);
-              area.bounds(0, "70%", "100%", "30%");
-              area.container(stage);
-              area.draw();
               // ------------------------ container2 ------------------------
+              var chart = anychart.column();
+              chart.animation(true);
+              var series = chart.column(ratio_data);
+              chart.title("Ratio of Tweets to Population");
+              series.tooltip()
+                  .position('center-top')
+                  .anchor('center-bottom')
+                  .offsetX(0)
+                  .offsetY(5)
+              chart.yScale().minimum(0);
+              chart.tooltip().positionMode('point');
+              chart.interactivity().hoverMode('by-x');
+              chart.xAxis().title("Region");
+              chart.yAxis().title("Tweets / Population");
+              chart.container("container2");
+              chart.draw();
+              // ------------------------ container3 ------------------------
               var rows = [];
               var age_groups = ["0-4", "5-9", "10-14", "15-19", "20-24",
                                 "25-29", "30-34", "35-39", "40-44", "45-49",
@@ -114,7 +125,7 @@
               var chart = anychart.column();
               chart.data(population_data);
               chart.animation(true);
-              chart.xAxis().title("Region");
+              chart.xAxis().title("Age");
               chart.yAxis().title("Population");
               chart.hovered().labels(false);
               chart.legend()
@@ -129,10 +140,10 @@
                 .anchor('center-bottom')
                 .offsetX(0)
                 .offsetY(5);
-              chart.container('container2');
+              chart.container('container3');
               chart.draw();
               // ------------------------ innerHTML ------------------------
-              document.getElementById("p1").innerHTML = total_tweets+" tweets about "+{{keywords|tojson}}+" have been collected";
+              document.getElementById("p1").innerHTML = total_tweets+" tweets about "+{{keywords|tojson}}+" have been collected.";
             });
         </script>
     </body>

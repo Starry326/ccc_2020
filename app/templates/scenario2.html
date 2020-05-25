@@ -11,26 +11,30 @@
         <script src="https://cdn.anychart.com/releases/v8/js/anychart-ui.min.js"></script>
     </head>
     <body>
-        <h1><a href="{{url_for('index')}}">COMP90024 Project 2</a></h1>
-        <h2>Scenario 2</h2>
-        <p>This story is about... </p>
-        <p id="p1"></p>
+        <h1 style="font-size:40px"><a href="{{url_for('index')}}">COMP90024 Project 2</a></h1>
+        <h2 style="font-size:30px">Scenario 2</h2>
+        <p id="p1" style="font-size:18px"></p>
         <div id="container1" style="width: 50vw; height: 80vh"></div>
-        <p>
-            The graph above shows the tweet distribution and the tweet to hospital ratio for each region in Australia.<br>
-            The tweet to hospital ratio measures the number of tweets about {{keywords}} against the total number of hospitals of each regions.
+        <div id="container2" style="width: 50vw; height: 40vh"></div>
+        <p style="font-size:18px">
+            The graphs above show the tweet distribution and the tweet to hospital ratio for each region in Australia.<br>
+            The tweet to hospital ratio measures the number of tweets about {{keywords|tojson}} against the total number of hospitals of each regions.
         </p>
-        <div id="container2"style="width: 90vw; height: 90vh"></div>
-        <p>
-            This bar graph demonstrates the hospital resource distribution across Australia.
+        <div id="container3"style="width: 90vw; height: 90vh"></div>
+        <p style="font-size:18px">
+            This bar chart demonstrates the hospital resource distribution across Australia.
         </p>
-        <div id="container3"style="width: 90vw; height: 70vh"></div>
-        <p>
-            This bar graph tells us the ratio of public and private hospitals.
+        <div id="container4"style="width: 90vw; height: 70vh"></div>
+        <p style="font-size:18px">
+            This bar chart tells us the ratio of public and private hospitals.
         </p>
-        <div id="container4"style="width: 70vw; height: 70vh"></div>
-        <p>
-            This bar graph tells us the ratio of public and private hospitals.
+        <div id="container5"style="width: 70vw; height: 70vh"></div>
+        <p style="font-size:18px">
+            This bar chart illustrates the mean income of each region in Australia.
+        </p>
+        <div id="container6"style="width: 70vw; height: 70vh"></div>
+        <p style="font-size:18px">
+            This bar chart illustrates the median income of each region in Australia.
         </p>
 
         <script type="text/javascript">
@@ -84,14 +88,24 @@
                 map.bounds(0, 0, "100%", "70%");
                 map.container(stage);
                 map.draw();
-
-                var area = anychart.area();
-                area.title("Tweet to Hospital Ratio");
-                area.splineArea(ratio_data);
-                area.bounds(0, "70%", "100%", "30%");
-                area.container(stage);
-                area.draw();
                 // ------------------------ container2 ------------------------
+                var chart = anychart.column();
+                chart.animation(true);
+                var series = chart.column(ratio_data);
+                chart.title("Ratio of Tweets to Hospitals");
+                series.tooltip()
+                    .position('center-top')
+                    .anchor('center-bottom')
+                    .offsetX(0)
+                    .offsetY(5)
+                chart.yScale().minimum(0);
+                chart.tooltip().positionMode('point');
+                chart.interactivity().hoverMode('by-x');
+                chart.xAxis().title("Region");
+                chart.yAxis().title("Tweets / Hospitals");
+                chart.container("container2");
+                chart.draw();
+                // ------------------------ container3 ------------------------
                 var rows = [];
                 var region_names = {"nsw": "New South Wales", "qld": "Queensland",
                                     "sa": "South Australia", "tas": "Tasmania",
@@ -135,9 +149,9 @@
                   .anchor('center-bottom')
                   .offsetX(0)
                   .offsetY(5);
-                chart.container('container2');
+                chart.container('container3');
                 chart.draw();
-                // ------------------------ container 3 ------------------------
+                // ------------------------ container4 ------------------------
                 var p_data = [];
                 for (i = 0; i < regions.length; i++) {
                     var row = [region_names[regions[i]]];
@@ -172,66 +186,110 @@
                 chart.legend()
                     .enabled(true)
                     .fontSize(13);
-                chart.container('container3');
+                chart.container('container4');
                 chart.draw();
-                // ------------------------ container 4 ------------------------
-                var income_data = [];
-                income_data = anychart.data.set(income_data);
-
-                var chart = anychart.line();
-                chart.padding([10, 20, 5, 20]);
+                // ------------------------ container5 ------------------------
+                var income_mean_data = [];
+                var income_median_data = [];
+                for (var i = 0; i < regions.length; i++) {
+                    var row1 = [regions[i].toUpperCase()];
+                    var row2 = [regions[i].toUpperCase()];
+                    for (var key in results[regions[i]]["income"]) {
+                        if (key.includes("mean")) {
+                            if (key.includes("Greater")) {
+                                row1[1] = results[regions[i]]["income"][key];
+                            } else {
+                                row1[2] = results[regions[i]]["income"][key];
+                            }
+                        }
+                        if (key.includes("median")) {
+                            if (key.includes("Greater")) {
+                                row2[1] = results[regions[i]]["income"][key];
+                            } else {
+                                row2[2] = results[regions[i]]["income"][key];
+                            }
+                        }
+                    }
+                    income_mean_data.push(row1);
+                    income_median_data.push(row2);
+                }
+                income_mean_data = anychart.data.set(income_mean_data);
+                var firstSeriesData = income_mean_data.mapAs({ x: 0, value: 1 });
+                var secondSeriesData = income_mean_data.mapAs({ x: 0, value: 2 });
+                var chart = anychart.bar();
                 chart.animation(true);
-                chart.crosshair(true);
-                chart.title('Income across Australia');
+                chart.padding([10, 40, 5, 20]);
+                chart.title('Mean Income across Australia');
+                chart.yScale().minimum(0);
+                chart.xAxis().labels().rotation(-90).padding([0, 0, 20, 0]);
                 chart.yAxis().title('Income');
-                chart.xAxis().title('Region');
-                //var logScale = anychart.scales.log();
-                //logScale.minimum(1)
-                //   .maximum(45000);
 
-                var firstSeriesData = income_data.mapAs({ x: 0, value: 1 });
-                var secondSeriesData = income_data.mapAs({ x: 0, value: 2 });
-                var thirdSeriesData = income_data.mapAs({ x: 0, value: 3 });
-                var forthSeriesData = income_data.mapAs({ x: 0, value: 4 });
+                var setupSeries = function (series, name) {
+                    series.name(name);
+                    series.hovered().labels(false);
+                    series
+                        .labels()
+                        .enabled(true)
+                        .position('right-center')
+                        .anchor('left-center')
+                    series
+                    .tooltip()
+                    .position('right')
+                    .anchor('left-center')
+                    .offsetX(5)
+                    .offsetY(0)
+                };
                 var series;
-                series = chart.line(firstSeriesData);
-                series.name("Greater city mean income");
-                series.labels()
-                    .enabled(true)
-                    .anchor('left-bottom')
-                    .padding(5);
-                series.markers(true);
-                series = chart.line(secondSeriesData);
-                series.name("Greater region mean income");
-                series.labels()
-                    .enabled(true)
-                    .anchor('left-bottom')
-                    .padding(5);
-                series.markers(true);
-                series = chart.line(thirdSeriesData);
-                series.name("Greater city median income");
-                series.labels()
-                    .enabled(true)
-                    .anchor('left-bottom')
-                    .padding(5);
-                series.markers(true);
-                series = chart.line(firstSeriesData);
-                series.name("Greater region median income");
-                series.labels()
-                    .enabled(true)
-                    .anchor('left-bottom')
-                    .padding(5);
-                series.markers(true);
+                series = chart.bar(firstSeriesData);
+                setupSeries(series, 'Greater City Mean Income');
+                series = chart.bar(secondSeriesData);
+                setupSeries(series, 'Rest of Region Mean Income');
 
-                chart.legend()
-                    .enabled(true)
-                    .fontSize(13)
-                    .padding([0, 0, 20, 0]);
-                chart.container("container4");
+                chart.legend().enabled(true).fontSize(13).padding([0, 0, 20, 0]);
+                chart.interactivity().hoverMode('single');
+                chart.tooltip().positionMode('point');
+                chart.container('container5');
+                chart.draw();
+                // ------------------------ container6 ------------------------
+                income_median_data = anychart.data.set(income_median_data);
+                var firstSeriesData = income_median_data.mapAs({ x: 0, value: 1 });
+                var secondSeriesData = income_median_data.mapAs({ x: 0, value: 2 });
+                var chart = anychart.bar();
+                chart.animation(true);
+                chart.padding([10, 40, 5, 20]);
+                chart.title('Median Income across Australia');
+                chart.yScale().minimum(0);
+                chart.xAxis().labels().rotation(-90).padding([0, 0, 20, 0]);
+                chart.yAxis().title('Income');
+
+                var setupSeries = function (series, name) {
+                    series.name(name);
+                    series.hovered().labels(false);
+                    series
+                        .labels()
+                        .enabled(true)
+                        .position('right-center')
+                        .anchor('left-center')
+                    series
+                    .tooltip()
+                    .position('right')
+                    .anchor('left-center')
+                    .offsetX(5)
+                    .offsetY(0)
+                };
+                var series;
+                series = chart.bar(firstSeriesData);
+                setupSeries(series, 'Greater City Median Income');
+                series = chart.bar(secondSeriesData);
+                setupSeries(series, 'Rest of Region Median Income');
+
+                chart.legend().enabled(true).fontSize(13).padding([0, 0, 20, 0]);
+                chart.interactivity().hoverMode('single');
+                chart.tooltip().positionMode('point');
+                chart.container('container6');
                 chart.draw();
                 // ------------------------ innerHTML ------------------------
-                document.getElementById("p1").innerHTML = total_tweets+" tweets about "+{{keywords|tojson}}+" have been collected";
-              });
+                document.getElementById("p1").innerHTML = total_tweets+" tweets about "+{{keywords|tojson}}+" have been collected.";
             });
         </script>
     </body>

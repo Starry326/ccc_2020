@@ -11,18 +11,18 @@
         <script src="https://cdn.anychart.com/releases/v8/js/anychart-ui.min.js"></script>
     </head>
     <body>
-        <h1><a href="{{url_for('index')}}">COMP90024 Project 2</a></h1>
-        <h2>Scenario 3</h2>
-        <p>This story is about... </p>
-        <p id="p1"></p>
+        <h1 style="font-size:40px"><a href="{{url_for('index')}}">COMP90024 Project 2</a></h1>
+        <h2 style="font-size:30px">Scenario 3</h2>
+        <p id="p1" style="font-size:18px"></p>
         <div id="container1" style="width: 50vw; height: 80vh"></div>
         <div id="container2" style="width: 50vw; height: 40vh"></div>
         <p>
-            The graph above shows the tweet distribution and the tweet to low income households ratio for each region in Australia.<br>
-            The tweet to low income households ratio measures the number of tweets about {{keywords}} against the total number of low income households of each region.
+            The graphs above show the tweet distribution and the tweet to low income households ratio for each region in Australia.<br>
+            The tweet to low income households ratio measures the number of tweets about {{keywords|tojson}} against the total number of low income households of each region.
         </p>
         <div id="container3"style="width: 90vw; height: 90vh"></div>
-        <p>
+        <p>(Click on the legend to select which region(s) to investigate)</p>
+        <p style="font-size:18px">
             This bar chart illustrates the population of different age groups across Australia.
         </p>
         <script type="text/javascript">
@@ -34,7 +34,6 @@
                 var tweet_data = [];
                 var ratio_data = [];
                 var total_tweets = 0;
-                //var total_population = 0;
                 for (var region in results) {
                     var x, y1, y2;
                     if (region == "nsw") {
@@ -61,7 +60,6 @@
                     y2 = results[region]["tweets_count"] / results[region]["low_income_households"];
 
                     total_tweets += results[region]["tweets_count"];
-                    //total_population += results[region]["population_data"]["total_population"];
                     tweet_data.push([x, y1]);
                     ratio_data.push([x, y2]);
                 }
@@ -75,12 +73,9 @@
                 map.bounds(0, 0, "100%", "70%");
                 map.container(stage);
                 map.draw();
-
+                // ------------------------ container2 ------------------------
                 var chart = anychart.column();
                 chart.animation(true);
-                //chart.title("Tweet to Low Income Households Ratio");
-                //chart.data(ratio_data);
-                //chart.bounds(0, "70%", "100%", "30%");
                 var series = chart.column(ratio_data);
                 chart.title("Ratio of Tweets to Low Income Households");
                 series.tooltip()
@@ -95,7 +90,7 @@
                 chart.yAxis().title("Tweets / Low Income Households");
                 chart.container("container2");
                 chart.draw();
-                // ------------------------ container2 ------------------------
+                // ------------------------ container3 ------------------------
                 var rows = [];
                 var age_groups = ["0-4", "5-9", "10-14", "15-19", "20-24",
                                   "25-29", "30-34", "35-39", "40-44", "45-49",
@@ -126,7 +121,7 @@
                 var chart = anychart.column();
                 chart.data(population_data);
                 chart.animation(true);
-                chart.xAxis().title("Region");
+                chart.xAxis().title("Age");
                 chart.yAxis().title("Population");
                 chart.hovered().labels(false);
                 chart.legend()
@@ -144,7 +139,7 @@
                 chart.container('container3');
                 chart.draw();
                 // ------------------------ innerHTML ------------------------
-                document.getElementById("p1").innerHTML = total_tweets+" tweets about "+{{keywords|tojson}}+" have been collected";
+                document.getElementById("p1").innerHTML = total_tweets+" tweets about "+{{keywords|tojson}}+" have been collected.";
             });
         </script>
     </body>
