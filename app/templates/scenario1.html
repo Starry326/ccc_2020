@@ -10,15 +10,15 @@
         <script src="https://cdn.anychart.com/geodata/2.0.0/countries/australia/australia.js"></script>
         <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
         <script src="https://cdn.anychart.com/releases/v8/js/anychart-ui.min.js"></script>
-        <script src="https://cdn.anychart.com/releases/v8/js/anychart-exports.min.js"></script>
     </head>
     <body>
         <h1><a href="{{url_for('index')}}">COMP90024 Project 2</a></h1>
         <h2>Scenario 1</h2>
+        <p>This story is about... </p>
         <p id="p1"></p>
         <div id="container1" style="width: 50vw; height: 80vh"></div>
         <p>
-            This graph above shows the tweet distribution and the tweet to population ratio for each region in Australia.<br>
+            The graph above shows the tweet distribution and the tweet to population ratio for each region in Australia.<br>
             The tweet to population ratio measures the number of tweets about {{keywords}} against the total population of each region.
         </p>
 
@@ -28,14 +28,12 @@
         </p>
 
         <script type="text/javascript">
-            // render pie chart
             anychart.onDocumentReady(function() {
               // ------------------------ get results ------------------------
               var results = {{results|tojson}};
               var regions = {{regions|tojson}};
 
               // ------------------------ container1 ------------------------
-              // convert format
               var tweet_data = [];
               var ratio_data = [];
               var total_tweets = 0;
@@ -93,11 +91,11 @@
                                 "25-29", "30-34", "35-39", "40-44", "45-49",
                                 "50-54", "55-59", "60-64", "65-69", "70-74",
                                 "75-79", "80-84", "over85"];
-            var region_names = {"nsw": "New South Wales", "qld": "Queensland",
-                                "sa": "South Australia", "tas": "Tasmania",
-                                "vic": "Victoria", "wa": "Western Australia",
-                                "act": "Australian Capital Territory",
-                                "nt": "Northern Territory"};
+              var region_names = {"nsw": "New South Wales", "qld": "Queensland",
+                                  "sa": "South Australia", "tas": "Tasmania",
+                                  "vic": "Victoria", "wa": "Western Australia",
+                                  "act": "Australian Capital Territory",
+                                  "nt": "Northern Territory"};
 
               for (var i = 0; i < age_groups.length; i++) {
                   var row = [age_groups[i]];
@@ -118,6 +116,7 @@
               var chart = anychart.column();
               chart.data(population_data);
               chart.animation(true);
+              chart.xAxis().title("Region");
               chart.yAxis().title("Population");
               chart.hovered().labels(false);
               chart.legend()

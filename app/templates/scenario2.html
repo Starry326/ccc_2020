@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Scenario 2</title>
+        <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-base.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
+        <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-map.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
+        <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-exports.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
+        <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-ui.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.15/proj4.js"></script>
+        <script src="https://cdn.anychart.com/geodata/2.0.0/countries/australia/australia.js"></script>
+        <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+        <script src="https://cdn.anychart.com/releases/v8/js/anychart-ui.min.js"></script>
+    </head>
+    <body>
+        <h1><a href="{{url_for('index')}}">COMP90024 Project 2</a></h1>
+        <h2>Scenario 2</h2>
+        <p>This story is about... </p>
+        <p id="p1"></p>
+        <div id="container1" style="width: 50vw; height: 80vh"></div>
+        <p>
+            The graph above shows the tweet distribution and the tweet to hospital ratio for each region in Australia.<br>
+            The tweet to hospital ratio measures the number of tweets about {{keywords}} against the total number of hospitals of each regions.
+        </p>
+        <div id="container2"style="width: 90vw; height: 90vh"></div>
+        <p>
+            This bar graph demonstrates the hospital resource distribution across Australia.
+        </p>
+        <div id="container3"style="width: 90vw; height: 70vh"></div>
+        <p>
+            This bar graph tells us the ratio of public and private hospitals.
+        </p>
+        <div id="container4"style="width: 70vw; height: 70vh"></div>
+        <p>
+            This bar graph tells us the ratio of public and private hospitals.
+        </p>
+
+        <script type="text/javascript">
+            anychart.onDocumentReady(function() {
+                // ------------------------ get results ------------------------
+                var results = {{results|tojson}};
+                var regions = {{regions|tojson}};
+
+                // ------------------------ container1 ------------------------
+                var tweet_data = [];
+                var ratio_data = [];
+                var total_tweets = 0;
+                var total_hospitals = 0;
+                for (var region in results) {
+                    var x, y1, y2;
+                    if (region == "nsw") {
+                        x = "AU.NS";
+                    } else if (region == "qld") {
+                        x = "AU.QL";
+                    } else if (region == "sa") {
+                        x = "AU.SA";
+                    } else if (region == "tas") {
+                        x = "AU.TS";
+                    } else if (region == "vic") {
+                        x ="AU.VI";
+                    } else if (region == "wa") {
+                        x = "AU.WA";
+                    } else if (region == "act") {
+                        x = "AU.CT";
+                    } else if (region == "nt") {
+                        x = "AU.NT";
+                    } else {
+                        console.log("No such region");
+                        break;
+                    }
+                    y1 = results[region]["tweets_count"];
+                    y2 = results[region]["tweets_count"] / results[region]["hospital_count"]["hospital total"];
+
+                    total_tweets += results[region]["tweets_count"];
+                    total_hospitals += results[region]["hospital_count"]["hospital total"];
+                    tweet_data.push([x, y1]);
+                    ratio_data.push([x, y2]);
+                }
+
+                var stage = anychart.graphics.create("container1");
+
+                var map = anychart.map();
+                map.geoData(anychart.maps.australia);
+                map.title("Tweet Distribution in Australia");
+                map.choropleth(tweet_data);
+                map.bounds(0, 0, "100%", "70%");
+                map.container(stage);
+                map.draw();
+
+                var area = anychart.area();
+                area.title("Tweet to Hospital Ratio");
+                area.splineArea(ratio_data);
+                area.bounds(0, "70%", "100%", "30%");
+                area.container(stage);
+                area.draw();
+                // ------------------------ container2 ------------------------
+                var rows = [];
+                var region_names = {"nsw": "New South Wales", "qld": "Queensland",
+                                    "sa": "South Australia", "tas": "Tasmania",
+                                    "vic": "Victoria", "wa": "Western Australia",
+                                    "act": "Australian Capital Territory",
+                                    "nt": "Northern Territory"};
+                var count_groups = ["<50 beds", "50-99 beds", "100-199 beds",
+                                    "200-500 beds", ">500 beds"];
+                var p_groups = ["public", "private"];
+                for (var i = 0; i < count_groups.length; i++) {
+                    var row = [count_groups[i]];
+                    for (var j = 0; j < regions.length; j++) {
+                        row.push(results[regions[j]]["hospital_count"]["hospitals("+count_groups[i]+")"]);
+                    }
+                    rows.push(row);
+                }
+                var header = ["#"];
+                for (var i = 0; i < regions.length; i++) {
+                    header.push(region_names[regions[i]]);
+                }
+                var count_data = {
+                    title: "Hospital Resources",
+                    header: header,
+                    rows: rows
+                };
+                var chart = anychart.column();
+                chart.data(count_data);
+                chart.animation(true);
+                chart.xAxis().title("Hospital");
+                chart.yAxis().title("Number of Hospitals");
+                chart.hovered().labels(false);
+                chart.legend()
+                  .enabled(true)
+                  .fontSize(13)
+                  .padding([0, 0, 20, 0]);
+                  chart.interactivity().hoverMode('single');
+
+                chart.tooltip()
+                  .positionMode('point')
+                  .position('center-top')
+                  .anchor('center-bottom')
+                  .offsetX(0)
+                  .offsetY(5);
+                chart.container('container2');
+                chart.draw();
+                // ------------------------ container 3 ------------------------
+                var p_data = [];
+                for (i = 0; i < regions.length; i++) {
+                    var row = [region_names[regions[i]]];
+                    for (j = 0; j < p_groups.length; j++) {
+                        row.push(results[regions[i]]["hospital_count"][p_groups[j]+" hospital"]);
+                    }
+                    p_data.push(row);
+                }
+                p_data = anychart.data.set(p_data);
+                var firstSeriesData = p_data.mapAs({ x: 0, value: 1 });
+                var secondSeriesData = p_data.mapAs({ x: 0, value: 2 });
+                var chart = anychart.column();
+                chart.animation(true);
+                chart.yAxis().title("Percentage");
+                chart.xAxis().title("Region");
+                chart.yScale().stackMode("percent");
+                chart.title("Distribution of Public and Private Hospitals");
+
+                var setupSeries = function (series, name) {
+                    series.name(name)
+                    .stroke('2 #fff 1');
+                    series.hovered().stroke('2 #fff 1');
+                };
+                var series;
+                series = chart.column(firstSeriesData);
+                setupSeries(series, 'Public');
+                series = chart.column(secondSeriesData);
+                setupSeries(series, 'Private');
+                chart.interactivity().hoverMode('by-x');
+                chart.tooltip()
+                    .displayMode('union');
+                chart.legend()
+                    .enabled(true)
+                    .fontSize(13);
+                chart.container('container3');
+                chart.draw();
+                // ------------------------ container 4 ------------------------
+                var income_data = [];
+                
+
+                var chart = anychart.line();
+                chart.padding([10, 20, 5, 20]);
+                chart.animation(true);
+                chart.crosshair(true);
+                chart.title('Income across Australia');
+                chart.yAxis().title('Income');
+                chart.xAxis().title('Region');
+                var logScale = anychart.scales.log();
+                logScale.minimum(1)
+                   .maximum(45000);
+
+            });
+        </script>
+    </body>
+</html>

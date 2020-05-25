@@ -3,7 +3,10 @@ from flask_restful import Api, Resource, reqparse, abort
 from dataProcess import gainTweetsData, gainAurinData, gainProportion, gainTweetsData2, gainAurinData2, gainAurinData3, gainTweetsData3, gainAurinData4
 import os.path
 
-keywords = {'scenario1': ["nightclub", "bar"]}
+keywords = {"scenario1": ["nightclub", "bar"],
+            "scenario2": ["covid-19", "coronavirus"],
+            "scenario3": []}
+regions = ["nsw", "qld", "sa", "tas", "vic", "wa", "act", "nt"]
 
 def create_app():
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -12,13 +15,11 @@ def create_app():
     app = Flask(__name__, template_folder=templates_dir, static_folder=static_dir)
     return (app)
 
-
 app = create_app()
 api = Api(app)
 
 class Scenario1(Resource):
     def get(self):
-        regions = ["nsw", "qld", "sa", "tas", "vic", "wa", "act", "nt"]
         results = dict()
         for region in regions:
             tweet_data = gainTweetsData(region)
@@ -27,21 +28,26 @@ class Scenario1(Resource):
             result = dict()
             result['population_data'] = proportion
             result['tweets_count'] = tweet_data
-
             results[region] = result
-
         return make_response(render_template('scenario1.html', keywords=keywords['scenario1'], regions=regions, results=results))
 
-        #tweets = dict()
-        #tweets["total"] = 0
-        #tweets["distribution"] = []
-        #for region in regions:
-        #    count = gainTweetsData(region)
-        #    tweets["total"] += count
-        #    tweets["distribution"].append({"region": region, "count": count})
-        #return make_response(render_template('scenario1.html', keywords=keywords['scenario1'], regions=regions, tweets=tweets))
-
 api.add_resource(Scenario1, '/starry_app/gain_data')
+
+class Scenario2(Resource):
+    def get(self):
+        results = dict()
+        for region in regions:
+            tweet_data = gainTweetsData2(region)
+            hospital_data = gainAurinData2(region)
+            income_data = gainAurinData3(region)
+            result = dict()
+            result['hospital_count'] = hospital_data
+            result['income'] = income_data
+            result['tweets_count'] = tweet_data
+            results[region] = result
+        return make_response(render_template('scenario2.html', keywords=keywords['scenario2'], regions=regions, results=results))
+
+api.add_resource(Scenario2, '/charlie_app/gain_data')
 
 class gainData(Resource):
     def get(self, region):
@@ -52,10 +58,8 @@ class gainData(Resource):
         results['population_data'] = proportion
         results['tweets_count'] = tweetData
         return results
-        #return make_response(render_template('scenario1Region.html', keywords=keywords['scenario1'], results=results, region=region.upper()))
 
 api.add_resource(gainData, '/starry_app/gain_data/<region>')
-
 
 class gainData2(Resource):
     def get(self, region):
@@ -81,7 +85,6 @@ class gainData3(Resource):
         results['population'] = populationData
         results['tweets_count'] = tweetData
         return (results)
-
 
 api.add_resource(gainData3, '/travis_app/gain_data/<region>')
 
