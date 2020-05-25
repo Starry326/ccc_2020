@@ -19,15 +19,27 @@ api = Api(app)
 class Scenario1(Resource):
     def get(self):
         regions = ["nsw", "qld", "sa", "tas", "vic", "wa", "act", "nt"]
-        #regions = ["nsw"]
-        tweets = dict()
-        tweets["total"] = 0
-        tweets["distribution"] = []
+        results = dict()
         for region in regions:
-            count = gainTweetsData(region)
-            tweets["total"] += count
-            tweets["distribution"].append({"region": region, "count": count})
-        return make_response(render_template('scenario1.html', keywords=keywords['scenario1'], regions=regions, tweets=tweets))
+            tweet_data = gainTweetsData(region)
+            aurin_data = gainAurinData(region)
+            proportion = gainProportion(aurin_data)
+            result = dict()
+            result['population_data'] = proportion
+            result['tweets_count'] = tweet_data
+
+            results[region] = result
+
+        return make_response(render_template('scenario1.html', keywords=keywords['scenario1'], regions=regions, results=results))
+
+        #tweets = dict()
+        #tweets["total"] = 0
+        #tweets["distribution"] = []
+        #for region in regions:
+        #    count = gainTweetsData(region)
+        #    tweets["total"] += count
+        #    tweets["distribution"].append({"region": region, "count": count})
+        #return make_response(render_template('scenario1.html', keywords=keywords['scenario1'], regions=regions, tweets=tweets))
 
 api.add_resource(Scenario1, '/starry_app/gain_data')
 
@@ -39,8 +51,8 @@ class gainData(Resource):
         results = dict()
         results['population_data'] = proportion
         results['tweets_count'] = tweetData
-        #return results
-        return make_response(render_template('scenario1Region.html', keywords=keywords['scenario1'], results=results, region=region.upper()))
+        return results
+        #return make_response(render_template('scenario1Region.html', keywords=keywords['scenario1'], results=results, region=region.upper()))
 
 api.add_resource(gainData, '/starry_app/gain_data/<region>')
 
