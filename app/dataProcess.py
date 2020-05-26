@@ -4,7 +4,7 @@ from io import BytesIO
 
 user = "admin"
 password = "admin"
-db_ip = '172.26.132.17'
+db_ip = '127.0.0.1'
 
 def gainTweetsData(region):
     b_obj = BytesIO()
